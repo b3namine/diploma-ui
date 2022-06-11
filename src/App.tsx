@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Fragment} from 'react';
+import {Route, Routes} from "react-router-dom";
+import {MenuBar} from './components/MenuBar';
+import {Home, Login, Registration, Test, Universities} from "./pages";
+import {Box, Container, Typography} from "@material-ui/core";
+import {useStyles} from "./App.styles";
+import ResultTest from "./pages/Tests/ResultTest";
+import {observer} from "mobx-react-lite";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+
+const App = observer(() => {
+    const classes = useStyles()
+    return (
+        <Fragment>
+            <MenuBar/>
+            <Container className={classes.container}>
+                <Routes>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/universities" element={<Universities/>}/>
+                    <Route path="/test" element={<Test/>}/>
+                    <Route path="/resultTest" element={<ResultTest/>}/>
+                    <Route path="/login" element={<Login/>}/>
+                    <Route path="/Registration" element={<Registration/>}/>
+                </Routes>
+                <Box className={classes.footer}>
+                    <Typography>Copyright © 2022 GorshunoVLSU</Typography>
+                </Box>
+            </Container>
+        </Fragment>);
+})
 
 export default App;
