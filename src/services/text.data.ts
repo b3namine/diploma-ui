@@ -31,3 +31,34 @@ export const results = [
         "power": "Middle"
     }
 ]
+
+export const emptyUniversity = {
+    id: 0,
+    name: '',
+    contacts: '',
+    info: '',
+    departments: null
+}
+
+export const emptyDepartment = {
+    id: 0,
+    universityId: 0,
+    name: '',
+    contacts: '',
+    info: '',
+    courses: null,
+    university: null
+}
+export const emptyCourse = {
+    id: 0,
+    departmentId: 0,
+    name: '',
+    code: '',
+    info: '',
+    budgetPlaces: 0,
+    contractPlaces: 0,
+    years: 0,
+    exams: '',
+    university: emptyUniversity,
+    department: emptyDepartment
+}

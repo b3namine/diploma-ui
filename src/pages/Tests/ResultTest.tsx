@@ -3,18 +3,19 @@ import {BorderLinearProgress, useStyles} from "./ResultTest.styles";
 import {useEffect} from "react";
 import {testService} from "../../services/test.service";
 import {useNavigate} from "react-router-dom";
+import {observer} from "mobx-react-lite";
 
-
-const ResultTest = () => {
+const ResultTest = observer(() => {
     const classes = useStyles()
     const navigate = useNavigate();
     const {resultTest} = testService
     useEffect(() => {
         if (!resultTest) return navigate('/test')
-    }, [])
+    }, [resultTest])
     if (!resultTest) return null
     const {results, professionalType, professions} = resultTest
     const barColor = (value: number) => value < 50 ? classes.barColorRed : value >= 80 ? classes.barColorGreen : classes.barColorOrange
+    const handleGetCourses = (profType: number) => () => navigate(`/courses/${profType}`)
     return <Box style={{flexGrow: 1}}>
         <Box marginBottom={'16px'}>
             <Typography variant={'h4'} className={classes.resultTitle}>Ваш тип
@@ -50,8 +51,10 @@ const ResultTest = () => {
                             <Typography variant={'h5'} className={classes.cardTitle}>{profession.name}</Typography>
                             <Box>Доступных направлений - {profession.coursesAmount}</Box>
                             <Box>
-                                <Button variant={'text'} className={classes.selectButton}>Выбрать направление</Button>
-
+                                <Button variant={'text'}
+                                        className={classes.selectButton}
+                                        onClick={handleGetCourses(profession.profType)}
+                                >Выбрать направление</Button>
                             </Box>
                         </Paper>
                     </Grid>
@@ -59,5 +62,5 @@ const ResultTest = () => {
             </Grid>
         </Box>
     </Box>
-}
+})
 export default ResultTest

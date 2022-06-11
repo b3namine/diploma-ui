@@ -4,7 +4,7 @@ import App from './App';
 import './index.css'
 import reportWebVitals from './reportWebVitals';
 import {
-    BrowserRouter as Router
+    HashRouter as Router
 } from "react-router-dom";
 
 const root = ReactDOM.createRoot(
