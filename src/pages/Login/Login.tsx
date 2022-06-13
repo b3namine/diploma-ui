@@ -1,20 +1,22 @@
 import {Avatar, Box, Button, Card, CardContent, TextField, Typography} from "@material-ui/core";
 import {useStyles} from "./Login.styles";
 import {ChangeEvent, useState} from "react";
+import {userService} from "../../services/user.service";
+import {observer} from "mobx-react-lite";
 
-const Login = () => {
+const Login = observer(() => {
     const classes = useStyles()
     const [values, setValues] = useState({
         login: '',
         password: ''
     })
+
     const handleChange = ({currentTarget: {name, value}}: ChangeEvent<HTMLInputElement>) => setValues({
         ...values,
         [name]: value
     })
 
-    const handleSubmit = () => console.log(values)
-
+    const handleSubmit = () => userService.login(values).catch(console.log)
     return (<Box className={classes.root}>
         <Typography variant={'h5'} className={classes.title}>Вход</Typography>
         <Card className={classes.cardContainer}>
@@ -45,5 +47,5 @@ const Login = () => {
             </CardContent>
         </Card>
     </Box>)
-}
+})
 export default Login

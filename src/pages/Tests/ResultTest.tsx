@@ -15,7 +15,10 @@ const ResultTest = observer(() => {
     if (!resultTest) return null
     const {results, professionalType, professions} = resultTest
     const barColor = (value: number) => value < 50 ? classes.barColorRed : value >= 80 ? classes.barColorGreen : classes.barColorOrange
-    const handleGetCourses = (profType: number) => () => navigate(`/courses/${profType}`)
+    const handleGetCourses = (profType: number, prof: string) => () => {
+        localStorage.setItem('prof', prof)
+        navigate(`/courses/${profType}`)
+    }
     return <Box style={{flexGrow: 1}}>
         <Box marginBottom={'16px'}>
             <Typography variant={'h4'} className={classes.resultTitle}>Ваш тип
@@ -39,21 +42,20 @@ const ResultTest = observer(() => {
                         </Box>
                     </Box>
                 ))}
-
             </CardContent>
         </Card>
         <Box marginTop={'48px'}>
             <Typography variant={'h5'} className={classes.subTitle}>Подходящие профессии</Typography>
             <Grid container spacing={3}>
                 {professions.map((profession) => (
-                    <Grid key={profession.id} item xs={4}>
+                    <Grid key={profession.id} item xs={4} sm={4}>
                         <Paper className={classes.cardProfession}>
                             <Typography variant={'h5'} className={classes.cardTitle}>{profession.name}</Typography>
                             <Box>Доступных направлений - {profession.coursesAmount}</Box>
                             <Box>
                                 <Button variant={'text'}
                                         className={classes.selectButton}
-                                        onClick={handleGetCourses(profession.profType)}
+                                        onClick={handleGetCourses(profession.profType, profession.name)}
                                 >Выбрать направление</Button>
                             </Box>
                         </Paper>

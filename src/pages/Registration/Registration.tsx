@@ -10,18 +10,22 @@ import {
     Typography
 } from "@material-ui/core";
 import {useStyles} from "./Registration.styles"
-import {useState, ChangeEvent} from "react";
+import {ChangeEvent, useState} from "react";
+import {observer} from "mobx-react-lite";
+import {userService} from "../../services/user.service";
+import {useGlobalStyles} from "../../assets/Global.styles";
 
 
-const Registration = () => {
+const Registration = observer(() => {
     const classes = useStyles()
+    const globalClasses = useGlobalStyles()
     const [values, setValues] = useState({
         login: '',
-        name: '',
-        family: '',
+        firstName: '',
+        secondName: '',
         email: '',
-        birth: '',
-        gender: '',
+        birthdate: '',
+        isMan: '',
         password: ''
     })
     const handleChange = ({currentTarget: {name, value}}: ChangeEvent<HTMLInputElement>) => setValues({
@@ -29,7 +33,7 @@ const Registration = () => {
         [name]: value
     })
 
-    const handleSubmit = () => console.log(values)
+    const handleSubmit = () => userService.registration(values).catch(console.log)
 
     return (<Box className={classes.root}>
         <Typography variant={'h5'} className={classes.title}>Регистрация</Typography>
@@ -42,22 +46,22 @@ const Registration = () => {
                            onChange={handleChange}
                            size={'small'}
                            variant="outlined"
-                           className={classes.input}/>
+                           className={globalClasses.input}/>
                 <TextField id="outlined-basic"
                            label="Имя"
-                           name={'name'}
-                           value={values.name}
+                           name={'firstName'}
+                           value={values.firstName}
                            onChange={handleChange}
                            size={'small'}
                            variant="outlined"
-                           className={classes.input}/>
+                           className={globalClasses.input}/>
                 <TextField id="outlined-basic"
                            label="Фамиля"
-                           name={'family'}
-                           value={values.family}
+                           name={'secondName'}
+                           value={values.secondName}
                            onChange={handleChange}
                            size={'small'} variant="outlined"
-                           className={classes.input}/>
+                           className={globalClasses.input}/>
                 <TextField id="outlined-basic"
                            label="Почта"
                            name={'email'}
@@ -65,19 +69,19 @@ const Registration = () => {
                            onChange={handleChange}
                            size={'small'}
                            variant="outlined"
-                           className={classes.input}/>
+                           className={globalClasses.input}/>
                 <TextField id="outlined-basic"
                            type={'date'}
-                           name={'birth'}
-                           value={values.birth}
+                           name={'birthdate'}
+                           value={values.birthdate}
                            onChange={handleChange}
                            size={'small'} variant="outlined"
-                           className={classes.input}/>
+                           className={globalClasses.input}/>
                 <RadioGroup aria-label="gender"
-                            name={'gender'}
-                            value={values.gender}
+                            name={'isMan'}
+                            value={values.isMan}
                             onChange={handleChange}
-                            className={classes.sexRadio}>
+                            className={globalClasses.sexRadio}>
                     <FormControlLabel value="male"
                                       control={<Radio color="primary" size={'small'}/>}
                                       label="Муж."/>
@@ -93,14 +97,14 @@ const Registration = () => {
                            type={'password'}
                            size={'small'}
                            variant="outlined"
-                           className={classes.input}/>
+                           className={globalClasses.input}/>
                 <Button variant={'contained'}
                         color={'primary'}
-                        className={classes.button}
+                        className={globalClasses.button}
                         onClick={handleSubmit}
                         fullWidth>Подтвердить</Button>
             </CardContent>
         </Card>
     </Box>)
-}
+})
 export default Registration

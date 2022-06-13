@@ -26,8 +26,8 @@ export type Department = {
     name: string
     contacts: string
     info: string
-    courses: string[] | null,
-    university: string | null
+    courses: Course[] | null,
+    university: University | null
 }
 
 export type ErrorCourse = {
@@ -35,4 +35,12 @@ export type ErrorCourse = {
     errorMessage: string
     status: number
     success: boolean
+}
+
+export type UniversityWithDepartment = {
+    id: number
+    name: string
+    contacts: string
+    info: string
+    departments: Department[]
 }

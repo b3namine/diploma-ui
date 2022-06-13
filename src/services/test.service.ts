@@ -1,10 +1,10 @@
 import axios from "axios";
 import {makeAutoObservable, runInAction} from "mobx";
 import {Question, ResultTest, SelectedResponse} from "../Modal/test";
+import {DEFAULT_URL} from "../http/interceptors";
 
-const host = 'http://localhost:5000'
-const getQuestionUrl = host + '/api/Question/getAll'
-const generateResultUrl = host + '/api/UserResult/generate'
+const getQuestionUrl = DEFAULT_URL + '/api/Question/getAll'
+const generateResultUrl = DEFAULT_URL + '/api/UserResult/generate'
 
 class TestService {
     public loading = false

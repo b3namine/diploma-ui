@@ -2,10 +2,11 @@ import {makeAutoObservable, runInAction} from "mobx";
 import axios, {AxiosError} from "axios";
 import {Course, ErrorCourse} from "../Modal/courses";
 import {emptyCourse} from "./text.data";
+import {DEFAULT_URL} from "../http/interceptors";
 
-const host = 'http://localhost:5000'
-const getCoursesByProfessionUrl = host + '/api/Course/get-by-profession'
-const getCourseUrl = host + '/api/Course/get'
+const getCoursesByProfessionUrl = DEFAULT_URL + '/api/Course/get-by-profession'
+const getCourseUrl = DEFAULT_URL + '/api/Course/get'
+const getCoursesUrl = DEFAULT_URL + '/api/Course/getall'
 
 class CoursesService {
     public loading = false
@@ -57,6 +58,27 @@ class CoursesService {
             }
         } finally {
             this.loadingCourse = false
+        }
+    }
+
+    public async getCourses(departmentIdFilter: number, nameFilter?: string, codeFilter?: string) {
+        try {
+            this.loading = true
+            const params = {departmentIdFilter, nameFilter, codeFilter}
+            const response = await axios.get(getCoursesUrl, {params})
+            const {success, data} = response.data
+            if (!success) {
+                return console.log('error get Courses By Profession ')
+            }
+            runInAction(() => (this.courses = data))
+        } catch (err) {
+            const errors = err as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                const error = errors.response?.data as ErrorCourse
+                console.log(error.errorMessage)
+            }
+        } finally {
+            this.loading = false
         }
     }
 

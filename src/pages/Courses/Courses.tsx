@@ -1,29 +1,32 @@
 import {Box, Button, Card, CardContent, Typography} from "@material-ui/core";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {coursesService} from "../../services/courses.service";
 import {useStyles} from "./Courses.styles";
 import {observer} from "mobx-react-lite";
+import EmptyCard from "../../components/EmptyCard/EmptyCard";
 
 const Courses = observer(() => {
     const classes = useStyles()
     const navigate = useNavigate();
     const {professionId = ''} = useParams()
     const {courses} = coursesService
+    const [profName, setProfName] = useState('')
     useEffect(() => {
         if (professionId) {
             coursesService.getCoursesByProfession(Number(professionId)).catch(() => console.log('error'))
+            setProfName(String(localStorage.getItem('prof')))
             return
         }
     }, [professionId])
     const handleCourseDetails = (courseId: number) => () => navigate(`/course/${courseId}`)
     if (!courses.length) {
-        return (<Card className={classes.emptyCourse}><CardContent>No course found</CardContent></Card>)
+        return <EmptyCard message={'No course found'}/>
     }
     return (
         <Box>
             <Typography variant={'h4'} className={classes.title}>
-                Направления обучения для профессии "Программист"
+                Направления обучения для профессии <strong>"{profName}"</strong>
             </Typography>
             {
                 courses.map((course) => (

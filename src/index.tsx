@@ -6,7 +6,9 @@ import reportWebVitals from './reportWebVitals';
 import {
     HashRouter as Router
 } from "react-router-dom";
+import {Chart, ArcElement, Tooltip, Legend} from 'chart.js'
 
+Chart.register(ArcElement, Tooltip, Legend);
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );

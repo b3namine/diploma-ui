@@ -3,11 +3,12 @@ import {useStyles} from "./Course.styles";
 import {useEffect} from "react";
 import {coursesService} from "../../services/courses.service";
 import {observer} from "mobx-react-lite";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 const Course = observer(() => {
     const classes = useStyles()
     const {courseId = ''} = useParams()
+    const navigate = useNavigate();
     const {course, loadingCourse} = coursesService
     useEffect(() => {
         coursesService.getCourse(Number(courseId)).catch(console.log)
@@ -20,11 +21,11 @@ const Course = observer(() => {
     if (loadingCourse) {
         return <Box>Loading</Box>
     }
-    const handleDepartments = (universityId: number) => () => console.log(universityId)
-    const handleCourses = (departmentId: number) => () => console.log(departmentId)
+    const handleDepartments = (universityId: number) => () => navigate(`/university/${universityId}`)
+    const handleCourses = (departmentId: number) => () => navigate(`/departments/${departmentId}`)
     return (
         <Box>
-            <Typography variant={'h4'} className={classes.title}>09.03.04 Программная инженерия</Typography>
+            <Typography variant={'h4'} className={classes.title}>{course.code} {course.name}</Typography>
             <Card className={classes.cardContainer}>
                 <CardContent className={classes.topCard}>
                     <Grid container spacing={3}>

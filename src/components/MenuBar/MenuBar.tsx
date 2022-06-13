@@ -1,31 +1,27 @@
-import {AppBar, Box, IconButton, Link, Toolbar, Typography} from "@material-ui/core";
-import MenuIcon from '@material-ui/icons/Menu';
+import {AppBar, Box, Link, Toolbar, Typography} from "@material-ui/core";
 import {useStyles} from "./MenuBar.styles";
 import {useNavigate} from "react-router-dom";
+import {userService} from "../../services/user.service";
+import {observer} from "mobx-react-lite";
+import {FC, Fragment} from "react";
 
-
-const MenuBar = () => {
+type LinkComponentProps = {
+    name: string
+    path: string
+}
+const MenuBar = observer(() => {
     const classes = useStyles();
     const navigate = useNavigate();
+    const {isAuth} = userService
     const handleNavigate = (path: string) => () => navigate(path)
-    const menuList = [
-        {
-            title: 'ВУЗы',
-            path: '/universities'
-        },
-        {
-            title: 'Тестирование',
-            path: '/test'
-        },
-        {
-            title: 'Войти',
-            path: '/login'
-        },
-        {
-            title: 'Зарегистрироваться',
-            path: '/registration'
-        },
-    ]
+    const LinkComponent: FC<LinkComponentProps> = ({path, name}) => (<Link
+        className={classes.appBarLink}
+        component="button"
+        variant="body2"
+        onClick={handleNavigate(path)}
+    >
+        {name}
+    </Link>)
     return (
         <AppBar position="static" className={classes.root}>
             <Toolbar>
@@ -34,17 +30,22 @@ const MenuBar = () => {
                         Профориентация абитуриентов
                     </Typography>
                     <Box className={classes.items}>
-                        {menuList.map((item, index) => (
-                            <Link
-                                key={index}
-                                className={classes.appBarLink}
-                                component="button"
-                                variant="body2"
-                                onClick={handleNavigate(item.path)}
-                            >
-                                {item.title}
-                            </Link>
-                        ))}
+                        <LinkComponent path={'/universities'} name={'ВУЗы'}/>
+                        <LinkComponent path={'/test'} name={'Тестирование'}/>
+                        {!isAuth
+                            ? (<Fragment>
+                                    <LinkComponent path={'/login'} name={'Войти'}/>
+                                    <LinkComponent path={'/registration'} name={'Зарегистрироваться'}/>
+                                </Fragment>
+                            )
+                            : (
+                                <Fragment>
+                                    <LinkComponent path={'/statics'} name={'Личная статистика'}/>
+                                    <LinkComponent path={'/profile'} name={'Личный кабинет'}/>
+                                    <LinkComponent path={'/logout'} name={'Выйти'}/>
+                                </Fragment>
+                            )}
+
                     </Box>
                 </Box>
 
@@ -54,5 +55,5 @@ const MenuBar = () => {
             </Toolbar>
         </AppBar>
     )
-}
+})
 export default MenuBar
