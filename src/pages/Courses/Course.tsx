@@ -6,6 +6,7 @@ import {observer} from "mobx-react-lite";
 import {useNavigate, useParams} from "react-router-dom";
 import {userService} from "../../services/user.service";
 import {onlyAdminsManagers} from "../../utils/checkRole";
+import CourseSkeleton from "../../components/PageSkeleton/CourseSkeleton";
 
 const Course = observer(() => {
     const classes = useStyles()
@@ -21,9 +22,7 @@ const Course = observer(() => {
         : value < 5
             ? 'года'
             : 'лет'
-    if (loadingCourse) {
-        return <Box>Loading</Box>
-    }
+    if (loadingCourse) return <CourseSkeleton/>
     const handleDepartments = (universityId: number) => () => navigate(`/university/${universityId}`)
     const handleCourses = (departmentId: number) => () => navigate(`/departments/${departmentId}`)
     const handleCourseEdit = (departmentId: number) => () => navigate(`/editCourse/${departmentId}`)

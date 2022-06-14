@@ -10,32 +10,34 @@ import EmptyCard from "../../components/EmptyCard/EmptyCard";
 import {userService} from "../../services/user.service";
 import {onlyAdmins, onlyAdminsManagers} from "../../utils/checkRole";
 import {universityService} from "../../services/university.service";
+import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
 
 const Departments = observer(() => {
     const classes = useStyles()
     const {departmentId = ''} = useParams()
     const navigate = useNavigate();
     const [allowed, setAllowed] = useState(false)
-    const {department} = departmentService
+    const {department, loading} = departmentService
     const {userUniversity} = universityService
     const {user} = userService
     useEffect(() => {
         departmentService.getDepartmentById(Number(departmentId)).catch(console.log)
     }, [departmentId])
     useEffect(() => {
-        universityService.getUniversityByUserId(Number(user?.id)).catch(console.log)
+        if (!user) return
+        universityService.getUniversityByUserId(Number(user.id)).catch(console.log)
         if (!userUniversity) return
         const departmentIds = userUniversity.departments.map(({id}) => id)
         if (!department) return
         setAllowed(departmentIds.includes(department.id))
     }, [user, department])
+    if (loading) return <PageSkeleton/>
     if (!department) return <EmptyCard message={'There no department with this ID'}/>
 
     const handleDepartments = () => navigate(`/university/${department.universityId}`)
     const handleCourse = (courseId: number) => () => navigate(`/course/${courseId}`)
     const handleCreateCourse = (departmentId: number) => () => navigate(`/createCourse/${departmentId}`)
     const handleOnEdit = () => navigate(`/editDepartment/${department.id}`)
-
     const handleOnDelete = () => departmentService.deleteDepartments(department.id)
         .then((res) => res ? handleDepartments() : null)
         .catch(console.log)

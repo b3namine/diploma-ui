@@ -6,6 +6,7 @@ import SimpleCard from "../../components/SimpleCard/SimpleCard";
 import {useNavigate} from "react-router-dom";
 import {universityService} from "../../services/university.service";
 import EmptyCard from "../../components/EmptyCard/EmptyCard";
+import UniversitySkeleton from "../../components/PageSkeleton/UniversitySkeleton";
 
 const Universities = observer(() => {
     const navigate = useNavigate();
@@ -16,7 +17,6 @@ const Universities = observer(() => {
     useEffect(() => {
         universityService.getUniversities().catch(console.log)
     }, [])
-
     return (<Fragment>
         <Typography variant={'h4'}>ВУЗы</Typography>
         <Box marginTop={'16px'}>
@@ -24,7 +24,7 @@ const Universities = observer(() => {
         </Box>
         <Box marginTop={'9px'}>
             {loading
-                ? 'loading'
+                ? <UniversitySkeleton/>
                 : !universities.length
                     ? <EmptyCard message={'No University found'}/>
                     : (

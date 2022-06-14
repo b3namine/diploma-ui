@@ -8,14 +8,15 @@ import InformationCard from "../../components/InformationCard/InformationCard";
 import SimpleCard from "../../components/SimpleCard/SimpleCard";
 import EmptyCard from "../../components/EmptyCard/EmptyCard";
 import {userService} from "../../services/user.service";
-import {onlyAdmins, onlyAdminsManagers} from "../../utils/checkRole";
+import {onlyAdmins} from "../../utils/checkRole";
+import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
 
 const University = observer(() => {
     const classes = useStyles()
     const {universityId = ''} = useParams()
     const navigate = useNavigate();
     const [allowed, setAllowed] = useState(false)
-    const {university, userUniversity} = universityService
+    const {university, userUniversity, loading} = universityService
     const {user} = userService
 
     useEffect(() => {
@@ -23,9 +24,12 @@ const University = observer(() => {
     }, [universityId])
 
     useEffect(() => {
-        universityService.getUniversityByUserId(Number(user?.id)).catch(console.log)
+        if (user) {
+            universityService.getUniversityByUserId(Number(user?.id)).catch(console.log)
+        }
         setAllowed(userUniversity?.id === university?.id)
     }, [user, university])
+    if (loading) return <PageSkeleton/>
     if (!university) return <EmptyCard message={'There no university with this ID'}/>
 
     const handleDepartment = (departmentId: number) => () => navigate(`/departments/${departmentId}`)
@@ -34,8 +38,6 @@ const University = observer(() => {
         .then((res) => res ? navigate('/universities') : null)
         .catch(console.log)
     const handleCreateDepartment = () => navigate(`/createDepartment/${university.id}`)
-
-
     return (<Fragment>
         <InformationCard name={university.name}
                          id={university.id}

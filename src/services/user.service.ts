@@ -12,6 +12,7 @@ import {
 import axios, {AxiosError} from "axios";
 import {ErrorCourse} from "../Modal/courses";
 import $api, {DEFAULT_URL} from "../http/interceptors";
+import {ErrorStatus} from "../Modal";
 
 const loginUrl = DEFAULT_URL + '/api/Authentication/autorisation'
 const registrationUrl = DEFAULT_URL + '/api/Authentication/registration'
@@ -32,6 +33,8 @@ class UserService {
     public loading = false
     public currentUser: UserUpdate | null = null
     public users: Users[] = []
+    public error: ErrorStatus = {status: false, message: ''}
+    public errorReg: ErrorStatus = {status: false, message: ''}
 
     constructor() {
         makeAutoObservable(this)
@@ -52,13 +55,17 @@ class UserService {
             localStorage.setItem('user', JSON.stringify(data));
             runInAction(() => {
                 this.isAuth = true
+                this.errorReg = {} as ErrorStatus
                 this.user = data
             })
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                this.errorReg = {
+                    status: true,
+                    message: error.errorMessage
+                }
             }
         } finally {
             this.loading = false
@@ -70,19 +77,23 @@ class UserService {
             if (this.isAuth) return
             this.loading = true
             const response = await axios.post(loginUrl, params)
-            const {success, data} = response.data
-            if (!success) return console.log('error login')
+            const {success, data, errors} = response.data
+            if (!success || errors) return console.log('error login')
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data));
             runInAction(() => {
                 this.isAuth = true
+                this.error = {} as ErrorStatus
                 this.user = {...data, birthdate: this.getBirth(data.birthdate), isMan: this.getGrander(data.isMan)}
             })
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                this.error = {
+                    status: true,
+                    message: error.errorMessage
+                }
             }
         } finally {
             this.loading = false

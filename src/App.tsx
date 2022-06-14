@@ -49,6 +49,12 @@ const App = observer(() => {
                         <Route path="/" element={<Home/>}/>
                         <Route path="/test" element={<Test/>}/>
                         <Route path="/resultTest" element={<ResultTest/>}/>
+                        <Route path="/universities" element={<Universities/>}/>
+                        <Route path="/university/:universityId" element={<University/>}/>
+                        <Route path="/departments/:departmentId" element={<Departments/>}/>
+                        <Route path="/courses/:professionId" element={<Courses/>}/>
+                        <Route path="/course/:courseId" element={<Course/>}/>
+
                         {!isAuth && (<Fragment>
                             <Route path="/login" element={<Login/>}/>
                             <Route path="/registration" element={<Registration/>}/>
@@ -57,17 +63,15 @@ const App = observer(() => {
 
                         {onlyAuthUser(user?.roleName) && (<Fragment>
 
-                            <Route path="/departments/:departmentId" element={<Departments/>}/>
+
                             <Route path="/createDepartment/:universityId" element={<CreateDepartment/>}/>
                             <Route path="/editDepartment/:departmentId" element={<EditDepartment/>}/>
 
-                            <Route path="/universities" element={<Universities/>}/>
-                            <Route path="/university/:universityId" element={<University/>}/>
+
                             <Route path="/createUniversity" element={<CreateUniversity/>}/>
                             <Route path="/editUniversity/:universityId" element={<EditUniversity/>}/>
 
-                            <Route path="/courses/:professionId" element={<Courses/>}/>
-                            <Route path="/course/:courseId" element={<Course/>}/>
+
                             <Route path="/createCourse/:departmentId" element={<CreateCourse/>}/>
                             <Route path="/editCourse/:courseId" element={<EditCourse/>}/>
 

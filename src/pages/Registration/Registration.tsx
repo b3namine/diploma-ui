@@ -19,6 +19,7 @@ import {useGlobalStyles} from "../../assets/Global.styles";
 const Registration = observer(() => {
     const classes = useStyles()
     const globalClasses = useGlobalStyles()
+    const {errorReg} = userService
     const [values, setValues] = useState({
         login: '',
         firstName: '',
@@ -98,6 +99,8 @@ const Registration = observer(() => {
                            size={'small'}
                            variant="outlined"
                            className={globalClasses.input}/>
+                {errorReg.status &&
+                    <Box marginTop={'10px'} marginBottom={'10px'}><Typography variant={'subtitle2'}>Пожалуйста, заполните всю информацию</Typography></Box>}
                 <Button variant={'contained'}
                         color={'primary'}
                         className={globalClasses.button}

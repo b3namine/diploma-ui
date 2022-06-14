@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {ChangeEvent, FC, useState} from "react";
+import {ChangeEvent, FC, KeyboardEvent, useState} from "react";
 import {useStyles} from "./SearchBar.styles";
 import {Box, Button, TextField} from "@material-ui/core";
 import {SearchBarProps} from "./SearchBar.types";
@@ -9,6 +9,8 @@ const SearchBar: FC<SearchBarProps> = observer(({find}) => {
     const [value, setValue] = useState('')
     const handleChange = ({currentTarget: {value}}: ChangeEvent<HTMLInputElement>) => setValue(value)
     const handleFind = () => find(value)
+    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => event.key === 'Enter' ? handleFind() : null
+
     return (<Box className={classes.root}>
         <Box width={'100%'} className={classes.block}>
             <TextField fullWidth
@@ -17,7 +19,8 @@ const SearchBar: FC<SearchBarProps> = observer(({find}) => {
                        placeholder={'Поиска вуза по названию'}
                        value={value}
                        onChange={handleChange}
-                       />
+                       onKeyPress={handleKeyPress}
+            />
         </Box>
         <Box>
             <Button disableElevation
