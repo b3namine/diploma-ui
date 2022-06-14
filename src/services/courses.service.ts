@@ -1,12 +1,17 @@
 import {makeAutoObservable, runInAction} from "mobx";
 import axios, {AxiosError} from "axios";
-import {Course, ErrorCourse} from "../Modal/courses";
+import {Course, CourseData, ErrorCourse} from "../Modal/courses";
 import {emptyCourse} from "./text.data";
-import {DEFAULT_URL} from "../http/interceptors";
+import $api, {DEFAULT_URL} from "../http/interceptors";
 
 const getCoursesByProfessionUrl = DEFAULT_URL + '/api/Course/get-by-profession'
 const getCourseUrl = DEFAULT_URL + '/api/Course/get'
 const getCoursesUrl = DEFAULT_URL + '/api/Course/getall'
+
+const createCourseUrl = DEFAULT_URL + '/api/Course/create'
+const updateCourseUrl = DEFAULT_URL + '/api/Course/update'
+const deleteCourseUrl = DEFAULT_URL + '/api/Course/delete'
+
 
 class CoursesService {
     public loading = false
@@ -22,7 +27,7 @@ class CoursesService {
         try {
             this.loading = true
             runInAction(() => (this.courses = []))
-            const response = await axios.post(`${getCoursesByProfessionUrl}?professionId=${professionId}`)
+            const response = await $api.post(`${getCoursesByProfessionUrl}?professionId=${professionId}`)
             const {success, data} = response.data
             if (!success) {
                 return console.log('error get Courses By Profession ')
@@ -44,7 +49,7 @@ class CoursesService {
             this.loadingCourse = true
             runInAction(() => (this.course = emptyCourse))
             const params = {id: courseId}
-            const response = await axios.get(getCourseUrl, {params})
+            const response = await $api.get(getCourseUrl, {params})
             const {success, data} = response.data
             if (!success) {
                 return console.log('error get Courses By Profession ')
@@ -65,7 +70,7 @@ class CoursesService {
         try {
             this.loading = true
             const params = {departmentIdFilter, nameFilter, codeFilter}
-            const response = await axios.get(getCoursesUrl, {params})
+            const response = await $api.get(getCoursesUrl, {params})
             const {success, data} = response.data
             if (!success) {
                 return console.log('error get Courses By Profession ')
@@ -80,6 +85,60 @@ class CoursesService {
         } finally {
             this.loading = false
         }
+    }
+
+    public async createCourse(course: CourseData) {
+        try {
+            const params = {...course}
+            const response = await $api.post(createCourseUrl, params)
+            const {success, data} = response.data
+            if (!success) return console.log('error createCourse ')
+            console.log(data)
+        } catch (err) {
+            const errors = err as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                const error = errors.response?.data as ErrorCourse
+                console.log(error.errorMessage)
+            }
+        }
+    }
+
+    public async updateCourse(course: CourseData) {
+        try {
+            const params = {...course}
+            const response = await $api.post(updateCourseUrl, params)
+            const {success, data} = response.data
+            if (!success) return console.log('error get Courses By Profession ')
+            return data.id
+        } catch (err) {
+            const errors = err as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                const error = errors.response?.data as ErrorCourse
+                console.log(error.errorMessage)
+            }
+        }
+    }
+
+    public async deleteCourse(id: number) {
+        try {
+            const params = {id}
+            const response = await $api.get(deleteCourseUrl, {params})
+            const {success, data} = response.data
+            if (!success) return console.log('error deleteCourse')
+            runInAction(() => (this.courses = this.courses.filter((course) => course.id !== id)))
+        } catch (err) {
+            const errors = err as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                const error = errors.response?.data as ErrorCourse
+                console.log(error.errorMessage)
+            }
+        }
+    }
+
+    public clearCourses() {
+        runInAction(() => {
+            this.courses = []
+        })
     }
 
 }

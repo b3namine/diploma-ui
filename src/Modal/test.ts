@@ -3,6 +3,7 @@ export type Question = {
     number: number,
     professions: Profession[]
 }
+
 export type Profession = {
     coursesAmount: number
     id: number
@@ -20,12 +21,32 @@ export type ResultTest = {
     results: Result[]
     user: null
 }
+
 export type Result = {
     name: string
     value: number
     power: string
 }
+
 export type ProfessionalType = {
     description: string
     name: string
+}
+
+
+export type Statics = {
+    count: number
+    high: GraphType
+    low: GraphType
+    middle: GraphType
+    preferedProfessions: Profession[]
+}
+
+type GraphType = {
+    realistic: number
+    investigative: number
+    artistic: number
+    social: number
+    enterprising: number
+    conventional: number
 }

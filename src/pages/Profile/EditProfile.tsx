@@ -1,24 +1,53 @@
 import {observer} from "mobx-react-lite";
-import {ChangeEvent, Fragment, useState} from "react";
+import {ChangeEvent, Fragment, useEffect, useState} from "react";
 import {useGlobalStyles} from "../../assets/Global.styles";
 import {Box, Button, FormControlLabel, Paper, Radio, RadioGroup, TextField, Typography} from "@material-ui/core";
+import {userService} from "../../services/user.service";
+import {UserUpdate} from "../../Modal/user";
+import {useNavigate} from "react-router-dom";
+import {formatDate} from "../../utils/dateFormate";
+
+const emptyUser = {
+    id: 0,
+    login: '',
+    firstName: '',
+    secondName: '',
+    email: '',
+    birthdate: '12-12-1970',
+    isMan: '',
+    password: ''
+}
+
 
 const EditProfile = observer(() => {
     const globalClasses = useGlobalStyles()
-    const [values, setValues] = useState({
-        login: '',
-        firstName: '',
-        secondName: '',
-        email: '',
-        birthdate: '',
-        isMan: '',
-        password: ''
-    })
-    const handleChange = ({currentTarget: {name, value}}: ChangeEvent<HTMLInputElement>) => setValues({
-        ...values,
-        [name]: value
-    })
-    const handleSubmit = () => console.log(values)
+    const {user} = userService
+    const navigate = useNavigate();
+    const [values, setValues] = useState<UserUpdate>(emptyUser)
+
+    useEffect(() => {
+        if (user) {
+            userService.getUser(user.id)
+                .then((data) => {
+                    setValues({...data, isMan: data.isMan ? 'male' : 'female'})
+                })
+                .catch(console.log)
+        }
+    }, [user])
+
+    const handleChange = ({currentTarget: {name, value}}: ChangeEvent<HTMLInputElement>) => {
+        setValues({
+            ...values,
+            [name]: value
+        })
+    }
+
+    const handleSubmit = () => userService.updateUserInfo(values)
+        .then((res) => res ? navigate('/profile') : null)
+        .catch(console.log)
+
+    if (!values) return null
+
     return (
         <Fragment>
             <Typography className={globalClasses.title}>Редактирование данных аккаунта</Typography>
@@ -78,7 +107,7 @@ const EditProfile = observer(() => {
                                     type={'date'}
                                     fullWidth
                                     name={'birthdate'}
-                                    value={values.birthdate}
+                                    value={formatDate(values.birthdate)}
                                     onChange={handleChange}
                                     size={'small'} variant="outlined"
                                     className={globalClasses.input}/></Box>
@@ -90,7 +119,7 @@ const EditProfile = observer(() => {
                                     name={'isMan'}
                                     value={values.isMan}
                                     onChange={handleChange}
-                                    >
+                        >
                             <FormControlLabel value="male"
                                               control={<Radio color="primary" size={'small'}/>}
                                               label="Мужчина"/>
@@ -122,8 +151,6 @@ const EditProfile = observer(() => {
                             onClick={handleSubmit}
                             fullWidth>Подтвердить</Button>
                 </Box>
-
-
             </Paper>
         </Fragment>
     )

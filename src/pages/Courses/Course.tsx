@@ -4,12 +4,15 @@ import {useEffect} from "react";
 import {coursesService} from "../../services/courses.service";
 import {observer} from "mobx-react-lite";
 import {useNavigate, useParams} from "react-router-dom";
+import {userService} from "../../services/user.service";
+import {onlyAdminsManagers} from "../../utils/checkRole";
 
 const Course = observer(() => {
     const classes = useStyles()
     const {courseId = ''} = useParams()
     const navigate = useNavigate();
     const {course, loadingCourse} = coursesService
+    const {user} = userService
     useEffect(() => {
         coursesService.getCourse(Number(courseId)).catch(console.log)
     }, [courseId])
@@ -23,6 +26,12 @@ const Course = observer(() => {
     }
     const handleDepartments = (universityId: number) => () => navigate(`/university/${universityId}`)
     const handleCourses = (departmentId: number) => () => navigate(`/departments/${departmentId}`)
+    const handleCourseEdit = (departmentId: number) => () => navigate(`/editCourse/${departmentId}`)
+    const handleCourseDelete = (courseId: number) => () => {
+        coursesService.deleteCourse(courseId).catch(console.log)
+        navigate(`/universities`)
+    }
+
     return (
         <Box>
             <Typography variant={'h4'} className={classes.title}>{course.code} {course.name}</Typography>
@@ -87,6 +96,22 @@ const Course = observer(() => {
                             {course.info}
                         </Box>
                     </Box>
+                    {
+                        onlyAdminsManagers(user?.roleName) && <Box display={'flex'} padding={'0 16px'}>
+                            <Box padding={'0 8px'}>
+                                <Button variant={'text'}
+                                        className={classes.selectButton}
+                                        onClick={handleCourseEdit(course.department.id)}
+                                >Редактировать</Button>
+                            </Box>
+                            <Box padding={'0 8px'}>
+                                <Button variant={'text'}
+                                        className={classes.selectButton}
+                                        onClick={handleCourseDelete(course.id)}
+                                >Удалить</Button>
+                            </Box>
+                        </Box>
+                    }
                 </CardContent>
             </Card>
         </Box>

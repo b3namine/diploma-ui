@@ -4,6 +4,7 @@ import {useEffect} from "react";
 import {testService} from "../../services/test.service";
 import {useNavigate} from "react-router-dom";
 import {observer} from "mobx-react-lite";
+import {ResultText} from "../../services/text.data";
 
 const ResultTest = observer(() => {
     const classes = useStyles()
@@ -32,7 +33,7 @@ const ResultTest = observer(() => {
                 {results.map((result, index) => (
                     <Box className={classes.barContainer} key={index}>
                         <Box className={classes.barTitle}>
-                            <Box>{result.name}</Box>
+                            <Box>{ResultText[result.name]}</Box>
                             <Box>{result.value} из 10</Box>
                         </Box>
                         <Box>

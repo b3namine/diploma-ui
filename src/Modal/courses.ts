@@ -44,3 +44,15 @@ export type UniversityWithDepartment = {
     info: string
     departments: Department[]
 }
+
+export type CourseData = {
+    departmentId: number
+    name: string
+    code: string
+    info: string
+    budgetPlaces: number
+    contractPlaces: number
+    years: number
+    exams: string
+    professionIds: number[]
+}

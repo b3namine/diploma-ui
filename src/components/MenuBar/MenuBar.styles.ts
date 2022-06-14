@@ -21,8 +21,8 @@ export const useStyles = makeStyles((theme) => ({
         fontSize: '1.25rem',
         textDecoration: 'none',
         whiteSpace: 'nowrap',
-        color:'black',
-        fontWeight:'bold',
+        color: 'black',
+        fontWeight: 'bold',
         cursor: 'pointer'
     },
     items: {

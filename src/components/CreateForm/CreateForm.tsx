@@ -1,11 +1,11 @@
 import {Box, Button, Paper, TextField, Typography} from "@material-ui/core";
 import {observer} from "mobx-react-lite";
 import {useGlobalStyles} from "../../assets/Global.styles";
-import {ChangeEvent, FC, useState} from "react";
+import {ChangeEvent, FC, useEffect, useState} from "react";
 import {CreateFormProps} from "./CreateForm.types";
 import {useStyles} from "./CreateForm.styles";
 
-const CreateForm: FC<CreateFormProps> = observer(({onSave}) => {
+const CreateForm: FC<CreateFormProps> = observer(({onSave, data}) => {
     const classes = useStyles()
     const globalClasses = useGlobalStyles()
     const [values, setValues] = useState({
@@ -13,6 +13,13 @@ const CreateForm: FC<CreateFormProps> = observer(({onSave}) => {
         info: '',
         contacts: ''
     })
+
+    useEffect(() => {
+        if (data) {
+            setValues(data)
+        }
+    }, [data])
+
     const handleChange = ({currentTarget: {name, value}}: ChangeEvent<HTMLInputElement>) => setValues({
         ...values,
         [name]: value

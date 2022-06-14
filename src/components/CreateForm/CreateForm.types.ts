@@ -1,5 +1,6 @@
 export type CreateFormProps = {
     onSave: (value: Value) => void
+    data?: Value
 }
 export type Value = {
     name: string

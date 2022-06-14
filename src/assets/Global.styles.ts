@@ -1,4 +1,5 @@
 import {makeStyles} from "@material-ui/core";
+import {blue} from "@material-ui/core/colors";
 
 export const useGlobalStyles = makeStyles(() => ({
     title: {
@@ -40,5 +41,22 @@ export const useGlobalStyles = makeStyles(() => ({
     },
     label: {
         marginBottom: 8
-    }
+    },
+    table: {
+        minWidth: 650,
+        width: '100%'
+    },
+    shortText: {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxWidth: 200
+    },
+    headTitle: {
+        fontWeight: 'bolder',
+        fontSize: 14
+    },
+    avatar: {
+        backgroundColor: blue[100],
+        color: blue[600],
+    },
 }))

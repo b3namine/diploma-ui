@@ -20,6 +20,7 @@ const Test = observer(() => {
     useEffect(() => {
         testService.getQuestions().catch(console.log)
     }, [])
+
     useEffect(() => {
         setActiveStep(0)
     }, [questions])
@@ -28,6 +29,10 @@ const Test = observer(() => {
         if (!invalidStep && !selectedResponse[activeStep]) return setError(true)
         setError(false)
         setActiveStep(Number(activeStep) + 1);
+    }
+    const buttonBack = () => {
+        if (activeStep === 0 || activeStep === 30) return
+        setActiveStep(Number(activeStep) - 1);
     }
     const handleFinish = () => {
         if (activeStep && !selectedResponse[activeStep]) return setError(true)
@@ -59,15 +64,32 @@ const Test = observer(() => {
                 ))}
             </Box>
             {error && 'Please choose one response'}
-            <Box>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={buttonClick}
-                >
-                    {buttonText}
-                </Button>
-            </Box>
+                <Box display={'flex'} alignItems={'center'}>
+                    {
+                        activeStep > 0 &&
+                        <Box marginRight={'8px'}><Button
+                            variant="contained"
+                            color="primary"
+                            onClick={buttonBack}
+                        >
+                            Назад
+                        </Button>
+                        </Box>
+                    }
+                    <Box>
+                        <Button
+                            disabled={!invalidStep && !selectedResponse[activeStep]}
+                            variant="contained"
+                            color="primary"
+                            onClick={buttonClick}
+                        >
+                            {buttonText}
+                        </Button>
+                    </Box>
+                </Box>
+
+
+
         </Fragment>)
     }
 

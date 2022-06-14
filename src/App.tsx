@@ -4,10 +4,15 @@ import {MenuBar} from './components/MenuBar';
 import {
     Course,
     Courses,
+    CreateCourse,
     CreateDepartment,
     CreateUniversity,
+    Dashboard,
     Departments,
+    EditCourse,
+    EditDepartment,
     EditProfile,
+    EditUniversity,
     Home,
     Login,
     Registration,
@@ -24,13 +29,15 @@ import {userService} from "./services/user.service";
 import Logout from "./pages/Logout/Logout";
 import Profile from "./pages/Profile/Profile";
 import {AuthProvider} from "./Provider/AuthProvider";
+import {onlyAdmins, onlyAuthUser} from "./utils/checkRole";
 
 
 const App = observer(() => {
     const classes = useStyles()
     const [state, setState] = useState(false)
+    const {user,isAuth} = userService
     useEffect(() => {
-        userService.checkAuth().then(() => setState(true)).catch(console.log);
+        userService.checkAuth().then((res) => setState(true)).catch(console.log);
     }, [])
     if (!state) return <Fragment>Loading ... </Fragment>
     return (
@@ -42,28 +49,48 @@ const App = observer(() => {
                         <Route path="/" element={<Home/>}/>
                         <Route path="/test" element={<Test/>}/>
                         <Route path="/resultTest" element={<ResultTest/>}/>
-                        <Route path="/courses/:professionId" element={<Courses/>}/>
-                        <Route path="/course/:courseId" element={<Course/>}/>
-                        <Route path="/universities" element={<Universities/>}/>
-                        <Route path="/university/:universityId" element={<University/>}/>
-                        <Route path="/departments/:departmentId" element={<Departments/>}/>
-                        <Route path="/editProfile" element={<EditProfile/>}/>
+                        {!isAuth && (<Fragment>
+                            <Route path="/login" element={<Login/>}/>
+                            <Route path="/registration" element={<Registration/>}/>
+                        </Fragment>)}
 
-                        <Route path="/createUniversity" element={<CreateUniversity/>}/>
-                        <Route path="/createDepartment" element={<CreateDepartment/>}/>
 
-                        <Route path="/login" element={<Login/>}/>
-                        <Route path="/registration" element={<Registration/>}/>
-                        <Route path="/statics" element={<Statics/>}/>
-                        <Route path="/profile" element={<Profile/>}/>
-                        <Route path="/logout" element={<Logout/>}/>
+                        {onlyAuthUser(user?.roleName) && (<Fragment>
+
+                            <Route path="/departments/:departmentId" element={<Departments/>}/>
+                            <Route path="/createDepartment/:universityId" element={<CreateDepartment/>}/>
+                            <Route path="/editDepartment/:departmentId" element={<EditDepartment/>}/>
+
+                            <Route path="/universities" element={<Universities/>}/>
+                            <Route path="/university/:universityId" element={<University/>}/>
+                            <Route path="/createUniversity" element={<CreateUniversity/>}/>
+                            <Route path="/editUniversity/:universityId" element={<EditUniversity/>}/>
+
+                            <Route path="/courses/:professionId" element={<Courses/>}/>
+                            <Route path="/course/:courseId" element={<Course/>}/>
+                            <Route path="/createCourse/:departmentId" element={<CreateCourse/>}/>
+                            <Route path="/editCourse/:courseId" element={<EditCourse/>}/>
+
+
+                            <Route path="/editProfile" element={<EditProfile/>}/>
+                            <Route path="/statics" element={<Statics/>}/>
+                            <Route path="/profile" element={<Profile/>}/>
+                            <Route path="/logout" element={<Logout/>}/>
+                            {onlyAdmins(user?.roleName) && (<Fragment>
+                                <Route path={'dashboard'}>
+                                    <Route path="/dashboard" element={<Dashboard/>}/>
+                                </Route>
+                            </Fragment>)}
+                        </Fragment>)}
+
+
                         <Route
                             path="*"
                             element={<Navigate to="/"/>}
                         />
                     </Routes>
                     <Box className={classes.footer}>
-                        <Typography>Copyright © 2022 GorshunoVLSU</Typography>
+                        <Typography>Copyright © 2022 GorshunovVLSU</Typography>
                     </Box>
                 </AuthProvider>
             </Container>
