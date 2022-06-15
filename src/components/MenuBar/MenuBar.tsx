@@ -4,7 +4,8 @@ import {useNavigate} from "react-router-dom";
 import {userService} from "../../services/user.service";
 import {observer} from "mobx-react-lite";
 import {FC, Fragment} from "react";
-import {onlyAdmins, onlyAdminsManagers, onlyAuthUser} from "../../utils/checkRole";
+import {onlyAdmins, onlyAdminsManagers, onlyAuthUser, onlyManagers} from "../../utils/checkRole";
+import {universityService} from "../../services/university.service";
 
 type LinkComponentProps = {
     name: string
@@ -14,7 +15,7 @@ const MenuBar = observer(() => {
     const classes = useStyles();
     const navigate = useNavigate();
     const {isAuth, user} = userService
-
+    const {managerUniversity} = universityService
 
     const handleNavigate = (path: string) => () => navigate(path)
     const LinkComponent: FC<LinkComponentProps> = ({path, name}) => (<Link
@@ -33,8 +34,8 @@ const MenuBar = observer(() => {
                         Профориентация абитуриентов
                     </Typography>
                     <Box className={classes.items}>
-                        <LinkComponent path={'/universities'} name={'ВУЗы'}/>
-                        <LinkComponent path={'/test'} name={'Тестирование'}/>
+                        {!onlyAdmins(user?.roleName) && <LinkComponent path={'/universities'} name={'ВУЗы'}/>}
+                        {!onlyAdminsManagers(user?.roleName) && (<LinkComponent path={'/test'} name={'Тестирование'}/>)}
                         {!isAuth && (
                             <Fragment>
                                 <LinkComponent path={'/login'} name={'Войти'}/>
@@ -42,27 +43,35 @@ const MenuBar = observer(() => {
                             </Fragment>
                         )}
                         {
-                            onlyAdminsManagers(user?.roleName) &&
-                            <LinkComponent path={'/manage'} name={'Ваш ВУЗ'}/>
+                            onlyManagers(user?.roleName) && managerUniversity &&
+                            <Link
+                                className={classes.appBarLink}
+                                component="button"
+                                variant="body2"
+                                onClick={handleNavigate(`/university/${managerUniversity.id}`)}
+                            >
+                                Ваш ВУЗ
+                            </Link>
                         }
-
                         {onlyAuthUser(user?.roleName) && (
                             <Fragment>
-                                <LinkComponent path={'/statics'} name={'Личная статистика'}/>
+                                {!onlyAdminsManagers(user?.roleName) &&
+                                    <LinkComponent path={'/statics'} name={'Личная статистика'}/>}
+                                {onlyManagers(user?.roleName) &&
+                                    <LinkComponent path={'/usersStatics'} name={'Общая статистика'}/>}
+
                                 <LinkComponent path={'/profile'} name={'Личный кабинет'}/>
-                                <LinkComponent path={'/logout'} name={'Выйти'}/>
+                                {onlyAdmins(user?.roleName) &&
+                                    <LinkComponent path={'/dashboard'}
+                                                   name={'панель администратора'}/>
+                                }
+
                             </Fragment>
                         )}
                     </Box>
                 </Box>
+                {onlyAuthUser(user?.roleName) && (<LinkComponent path={'/logout'} name={'Выйти'}/>)}
 
-                {onlyAdmins(user?.roleName) &&
-                    <LinkComponent path={'/dashboard'}
-                                   name={'панель администратора'}/>
-                }
-                {/*<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">*/}
-                {/*    <MenuIcon/>*/}
-                {/*</IconButton>*/}
             </Toolbar>
         </AppBar>
     )

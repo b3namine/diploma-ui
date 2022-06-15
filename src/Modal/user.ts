@@ -35,12 +35,9 @@ export interface User {
 export interface UserUpdate extends User {
     password: string
     id: number
+    role?: string
 }
 
-export interface UserCreate extends User {
-    password: string
-    role: Role
-}
 
 export interface UserRole {
     id: number

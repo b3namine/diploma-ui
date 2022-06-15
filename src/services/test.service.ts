@@ -2,6 +2,9 @@ import {makeAutoObservable, runInAction} from "mobx";
 import {Question, ResultTest, SelectedResponse, Statics} from "../Modal/test";
 import $api, {DEFAULT_URL} from "../http/interceptors";
 import {ResultFilter} from "../Modal/user";
+import axios, {AxiosError} from "axios";
+import {toast} from "react-toastify";
+import {errorToast} from "./text.data";
 
 const getQuestionUrl = DEFAULT_URL + '/api/Question/getAll'
 
@@ -23,6 +26,7 @@ class TestService {
 
     public statics: Statics | null = null
     public loadingStatics = false
+
     constructor() {
         makeAutoObservable(this)
     }
@@ -36,7 +40,10 @@ class TestService {
             if (!success) return console.log('error get questions')
             runInAction(() => (this.questions = data))
         } catch (error) {
-            console.log(error)
+            const errors = error as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                toast.error('Generate questions error', errorToast)
+            }
         } finally {
             this.loading = false
         }
@@ -53,7 +60,10 @@ class TestService {
             runInAction(() => (this.resultTest = data))
             return true
         } catch (error) {
-            console.log(error)
+            const errors = error as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                toast.error('Generate result error', errorToast)
+            }
         } finally {
             this.ResultLoading = false
         }
@@ -65,9 +75,12 @@ class TestService {
             const response = await $api.get(getResultUrl, {params})
             const {data, success} = response.data
             if (!success) return console.log('error get questions')
-            console.log(data)
+            return true
         } catch (error) {
-            console.log(error)
+            const errors = error as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                toast.error('Get result error', errorToast)
+            }
         }
     }
 
@@ -78,22 +91,34 @@ class TestService {
             const {data, success} = response.data
             if (!success) return console.log('error getAllResultUrl')
             runInAction(() => (this.allResult = data))
-            console.log(data)
+            return true
         } catch (error) {
-            console.log(error)
+            const errors = error as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                toast.error('Get results error', errorToast)
+            }
         }
     }
 
     public async getStatics(filter?: ResultFilter) {
         try {
             this.loading = true
-            const params = {...filter}
+            this.statics = null
+            let params = {...filter}
+            Object.keys(params).forEach(key => {
+                if (params[key as keyof ResultFilter] === '') {
+                    delete params[key as keyof ResultFilter];
+                }
+            });
             const response = await $api.post(getStaticsUrl, params)
             const {data, success} = response.data
             if (!success) return console.log('error getStatics')
-            runInAction(()=>(this.statics = data))
+            runInAction(() => (this.statics = data))
         } catch (error) {
-            console.log(error)
+            const errors = error as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                toast.error('get statistic error', errorToast)
+            }
         } finally {
             this.loading = false
         }
@@ -103,11 +128,14 @@ class TestService {
         try {
             const params = {id}
             const response = await $api.get(deleteResultUrl, {params})
-            const {data, success} = response.data
+            const {success} = response.data
             if (!success) return console.log('error deleteResult')
-            console.log(data)
+            return true
         } catch (error) {
-            console.log(error)
+            const errors = error as Error | AxiosError;
+            if (axios.isAxiosError(errors)) {
+                toast.error('Delete result error', errorToast)
+            }
         }
     }
 

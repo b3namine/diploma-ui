@@ -1,18 +1,11 @@
 import {makeAutoObservable, runInAction} from "mobx";
-import {
-    AuthData,
-    LoginData,
-    RegistrationData,
-    UserCreate,
-    UserFilter,
-    UserRole,
-    Users,
-    UserUpdate
-} from "../Modal/user";
+import {AuthData, LoginData, RegistrationData, UserFilter, UserRole, Users, UserUpdate} from "../Modal/user";
 import axios, {AxiosError} from "axios";
 import {ErrorCourse} from "../Modal/courses";
 import $api, {DEFAULT_URL} from "../http/interceptors";
 import {ErrorStatus} from "../Modal";
+import {toast} from "react-toastify";
+import {errorToast} from "./text.data";
 
 const loginUrl = DEFAULT_URL + '/api/Authentication/autorisation'
 const registrationUrl = DEFAULT_URL + '/api/Authentication/registration'
@@ -35,6 +28,7 @@ class UserService {
     public users: Users[] = []
     public error: ErrorStatus = {status: false, message: ''}
     public errorReg: ErrorStatus = {status: false, message: ''}
+    public userForEdit: UserUpdate | null = null
 
     constructor() {
         makeAutoObservable(this)
@@ -62,6 +56,7 @@ class UserService {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
+                toast.error('register User error', errorToast)
                 this.errorReg = {
                     status: true,
                     message: error.errorMessage
@@ -90,6 +85,7 @@ class UserService {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
+                toast.error('login User error', errorToast)
                 this.error = {
                     status: true,
                     message: error.errorMessage
@@ -136,7 +132,10 @@ class UserService {
         try {
             if (!this.isAuth) return
             this.loading = true
-            const params = {...userInfo, isMan: userInfo.isMan === 'male'}
+            const params = {
+                ...userInfo,
+                isMan: userInfo.isMan === 'male',
+            }
             const response = await $api.post(updateUserUrl, params)
             const {success} = response.data
             if (!success) return console.log('error login')
@@ -144,8 +143,7 @@ class UserService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Update User error', errorToast)
             }
         } finally {
             this.loading = false
@@ -159,12 +157,12 @@ class UserService {
             const response = await $api.get(getUserUrl, {params})
             const {success, data} = response.data
             if (!success) return console.log('error login')
+            this.userForEdit = data
             return data
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get User error', errorToast)
             }
         }
     }
@@ -179,26 +177,25 @@ class UserService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get all users error', errorToast)
             }
         }
     }
 
-    public async creteUser(userInfo: UserCreate) {
+    public async creteUser(userInfo: UserUpdate) {
         try {
-            if (this.isAuth) return
+            if (!this.isAuth) return
             this.loading = true
             const params = {...userInfo, isMan: userInfo.isMan === 'male',}
             const response = await $api.post(creteUserUrl, params)
             const {success, data} = response.data
             if (!success) return console.log('error login')
-            console.log(data)
+            runInAction(() => (this.users = [...data, ...this.users]))
+            return true
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Create User error', errorToast)
             }
         } finally {
             this.loading = false
@@ -207,34 +204,32 @@ class UserService {
 
     public async updateRoleUser(userRole: UserRole) {
         try {
-            if (this.isAuth) return
+            if (!this.isAuth) return
             const params = {...userRole}
             const response = await $api.get(updateRoleUserUrl, {params})
-            const {success, data} = response.data
+            const {success} = response.data
             if (!success) return console.log('error updateRoleUser')
-            console.log(data)
+            return true
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Update User role error', errorToast)
             }
         }
     }
 
     public async deleteUser(id: number) {
         try {
-            if (this.isAuth) return
+            if (!this.isAuth) return
             const params = {id}
             const response = await $api.get(deleteUserUrl, {params})
-            const {success, data} = response.data
+            const {success} = response.data
             if (!success) return console.log('error login')
-            console.log(data)
+            runInAction(() => (this.users = this.users.filter((user) => user.id !== id)))
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Delete User error', errorToast)
             }
         }
     }

@@ -4,6 +4,8 @@ import {ErrorCourse, UniversityWithDepartment} from "../Modal/courses";
 import $api, {DEFAULT_URL} from "../http/interceptors";
 import {University} from "../Modal/University";
 import {userService} from "./user.service";
+import {toast} from "react-toastify";
+import {errorToast} from "./text.data";
 
 const getUniversitiesUrl = DEFAULT_URL + '/api/University/getall'
 const getUniversityUrl = DEFAULT_URL + '/api/University/get'
@@ -18,7 +20,7 @@ class UniversityService {
     public loading = false
     public universities: UniversityWithDepartment[] = []
     public university: UniversityWithDepartment | null = null
-    public userUniversity: UniversityWithDepartment | null = null
+    public managerUniversity: UniversityWithDepartment | null = null
 
     constructor() {
         makeAutoObservable(this)
@@ -36,8 +38,7 @@ class UniversityService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get Universities error', errorToast)
             }
         } finally {
             this.loading = false
@@ -56,8 +57,7 @@ class UniversityService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get Universities error', errorToast)
             }
         } finally {
             this.loading = false
@@ -70,12 +70,11 @@ class UniversityService {
             const response = await $api.get(getUniversityByUserUrl, {params})
             const {success, data} = response.data
             if (!success) return console.log('error getUniversityByUserId')
-            runInAction(() => (this.userUniversity = data))
+            runInAction(() => (this.managerUniversity = data))
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get University error', errorToast)
             }
         }
     }
@@ -90,8 +89,7 @@ class UniversityService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Create University error', errorToast)
             }
         }
     }
@@ -106,8 +104,7 @@ class UniversityService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Update University error', errorToast)
             }
         }
     }
@@ -123,8 +120,7 @@ class UniversityService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Delete University error', errorToast)
             }
         }
     }

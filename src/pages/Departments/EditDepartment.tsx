@@ -6,12 +6,18 @@ import {departmentService} from "../../services/department.service";
 import {Fragment, useEffect} from "react";
 import {Typography} from "@material-ui/core";
 import CreateForm from "../../components/CreateForm/CreateForm";
+import {universityService} from "../../services/university.service";
 
 const EditDepartment = observer(() => {
     const globalClasses = useGlobalStyles()
     const navigate = useNavigate();
     const {department} = departmentService
+    const {managerUniversity} = universityService
     const {departmentId = ''} = useParams()
+    if (managerUniversity && !managerUniversity.departments.map(({id}) => id).includes(Number(departmentId))) {
+        const path = managerUniversity.departments.length ? `/editDepartment/${managerUniversity.departments[0].id}` : `/university/${managerUniversity.id}`
+        navigate(path)
+    }
     useEffect(() => {
         if (departmentId) {
             departmentService.getDepartmentById(Number(departmentId)).catch(console.log)

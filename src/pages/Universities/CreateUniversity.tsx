@@ -10,7 +10,6 @@ import {useNavigate} from "react-router-dom";
 const CreateUniversity = observer(() => {
     const globalClasses = useGlobalStyles()
     const navigate = useNavigate();
-
     const handleSave = (value: Value) => universityService.createUniversity(value)
         .then((id) => id ? navigate(`/university/${id}`) : null)
         .catch(console.log)

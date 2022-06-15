@@ -3,6 +3,8 @@ import axios, {AxiosError} from "axios";
 import {Department, ErrorCourse} from "../Modal/courses";
 import $api, {DEFAULT_URL} from "../http/interceptors";
 import {Departments} from "../Modal/departments";
+import {toast} from "react-toastify";
+import {errorToast} from "./text.data";
 
 const getDepartmentsUrl = DEFAULT_URL + '/api/Department/getall'
 const getDepartmentByIdUrl = DEFAULT_URL + '/api/Department/get'
@@ -35,8 +37,7 @@ class DepartmentService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get department error', errorToast)
             }
         } finally {
             this.loading = false
@@ -55,8 +56,7 @@ class DepartmentService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get department error', errorToast)
             }
         } finally {
             this.loading = false
@@ -73,8 +73,7 @@ class DepartmentService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Create department error', errorToast)
             }
         }
     }
@@ -89,8 +88,7 @@ class DepartmentService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Update department error', errorToast)
             }
         }
     }
@@ -106,8 +104,7 @@ class DepartmentService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Delete department error', errorToast)
             }
         }
     }

@@ -8,7 +8,7 @@ import InformationCard from "../../components/InformationCard/InformationCard";
 import SimpleCard from "../../components/SimpleCard/SimpleCard";
 import EmptyCard from "../../components/EmptyCard/EmptyCard";
 import {userService} from "../../services/user.service";
-import {onlyAdmins, onlyAdminsManagers} from "../../utils/checkRole";
+import {onlyAdmins} from "../../utils/checkRole";
 import {universityService} from "../../services/university.service";
 import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
 
@@ -18,19 +18,22 @@ const Departments = observer(() => {
     const navigate = useNavigate();
     const [allowed, setAllowed] = useState(false)
     const {department, loading} = departmentService
-    const {userUniversity} = universityService
+    const {managerUniversity} = universityService
     const {user} = userService
+
     useEffect(() => {
         departmentService.getDepartmentById(Number(departmentId)).catch(console.log)
     }, [departmentId])
+
     useEffect(() => {
-        if (!user) return
-        universityService.getUniversityByUserId(Number(user.id)).catch(console.log)
-        if (!userUniversity) return
-        const departmentIds = userUniversity.departments.map(({id}) => id)
+
+        if (!managerUniversity) return
+        const departmentIds = managerUniversity.departments.map(({id}) => id)
+
         if (!department) return
         setAllowed(departmentIds.includes(department.id))
     }, [user, department])
+
     if (loading) return <PageSkeleton/>
     if (!department) return <EmptyCard message={'There no department with this ID'}/>
 

@@ -16,7 +16,7 @@ const University = observer(() => {
     const {universityId = ''} = useParams()
     const navigate = useNavigate();
     const [allowed, setAllowed] = useState(false)
-    const {university, userUniversity, loading} = universityService
+    const {university, managerUniversity, loading} = universityService
     const {user} = userService
 
     useEffect(() => {
@@ -24,11 +24,8 @@ const University = observer(() => {
     }, [universityId])
 
     useEffect(() => {
-        if (user) {
-            universityService.getUniversityByUserId(Number(user?.id)).catch(console.log)
-        }
-        setAllowed(userUniversity?.id === university?.id)
-    }, [user, university])
+        setAllowed(managerUniversity?.id === university?.id)
+    }, [university])
     if (loading) return <PageSkeleton/>
     if (!university) return <EmptyCard message={'There no university with this ID'}/>
 

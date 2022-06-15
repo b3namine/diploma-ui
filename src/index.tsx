@@ -5,6 +5,7 @@ import './index.css'
 import reportWebVitals from './reportWebVitals';
 import {HashRouter as Router} from "react-router-dom";
 import {ArcElement, Chart, Legend, Tooltip} from 'chart.js'
+import 'react-toastify/dist/ReactToastify.css'
 
 Chart.register(ArcElement, Tooltip, Legend);
 const root = ReactDOM.createRoot(

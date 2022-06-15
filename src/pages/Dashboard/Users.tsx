@@ -20,10 +20,9 @@ import EmptyCard from "../../components/EmptyCard/EmptyCard";
 import {Autocomplete} from "@material-ui/lab";
 import {UserFilter} from "../../Modal/user";
 import {useNavigate} from "react-router-dom";
+import {genders, roles} from "../../services/text.data";
 
 
-const genders = [{id: 1, name: 'Male'}, {id: 2, name: 'Female'}]
-const roles = [{id: 2, name: 'user'}, {id: 1, name: 'admin'}, {id: 3, name: 'manager'}]
 const Users = observer(() => {
     const classes = useGlobalStyles()
     const {users} = userService
@@ -35,7 +34,8 @@ const Users = observer(() => {
     const handleChange = ({currentTarget: {name, value}}: any) => setValues({...values, [name]: value})
     const handleChangeAuto = (value: any) => setValues({...values, ...value})
     const getUser = () => userService.getAllUsers(values).catch(console.log)
-    const editUser = (userId: number) => () => navigate(`/editCourse/${userId}`)
+    const editUser = (userId: number) => () => navigate(`/editUser/${userId}`)
+    const createUser = () => navigate(`/createUser`)
     const deleteUser = (userId: number) => () => userService.deleteUser(userId).catch(console.log)
 
     return (
@@ -126,7 +126,11 @@ const Users = observer(() => {
                         </Button>
                     </Box>
                 </Box>
-
+                <Box marginTop={'8px'}>
+                    <Button variant={'contained'} color={'primary'} onClick={createUser}>
+                        Create User
+                    </Button>
+                </Box>
             </Box>
             {!users.length ? (
                 <EmptyCard message={'No User Found'}/>

@@ -24,7 +24,9 @@ export {default as Course} from './Courses/Course'
 export {default as CreateCourse} from './Courses/CreateCourse'
 export {default as EditCourse} from './Courses/EditCourse'
 
-
+export {default as UsersStatics} from './Statics/UsersStatics'
 export {default as Dashboard} from './Dashboard/Dashboard'
+export {default as EditUser} from './Dashboard/EditUser'
+export {default as CreateUser} from './Dashboard/CreateUser'
 
 

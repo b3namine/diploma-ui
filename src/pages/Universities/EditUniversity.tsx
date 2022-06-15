@@ -9,9 +9,13 @@ import {universityService} from "../../services/university.service";
 
 const EditUniversity = observer(() => {
     const globalClasses = useGlobalStyles()
-    const {university} = universityService
+    const {university, managerUniversity} = universityService
     const {universityId = ''} = useParams()
     const navigate = useNavigate();
+
+    if (managerUniversity && managerUniversity.id !== Number(universityId)) {
+        navigate(`/editUniversity/${managerUniversity.id}`)
+    }
 
     useEffect(() => {
         if (universityId) {

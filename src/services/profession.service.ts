@@ -3,6 +3,8 @@ import axios, {AxiosError} from "axios";
 import {ErrorCourse} from "../Modal/courses";
 import $api, {DEFAULT_URL} from "../http/interceptors";
 import {Profession, ProfessionItem} from "../Modal/Profession";
+import {toast} from "react-toastify";
+import {errorToast} from "./text.data";
 
 const getAllProfessionUrl = DEFAULT_URL + '/api/Profession/getall'
 const createProfessionUrl = DEFAULT_URL + '/api/Profession/create'
@@ -25,8 +27,7 @@ class ProfessionService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get profession error', errorToast)
             }
         }
     }
@@ -42,8 +43,7 @@ class ProfessionService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Create profession error', errorToast)
             }
         }
     }
@@ -58,8 +58,7 @@ class ProfessionService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Delete profession error', errorToast)
             }
         }
     }

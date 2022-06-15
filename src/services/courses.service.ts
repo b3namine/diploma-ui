@@ -1,8 +1,9 @@
 import {makeAutoObservable, runInAction} from "mobx";
 import axios, {AxiosError} from "axios";
 import {Course, CourseData, ErrorCourse} from "../Modal/courses";
-import {emptyCourse} from "./text.data";
+import {emptyCourse, errorToast} from "./text.data";
 import $api, {DEFAULT_URL} from "../http/interceptors";
+import {toast} from 'react-toastify'
 
 const getCoursesByProfessionUrl = DEFAULT_URL + '/api/Course/get-by-profession'
 const getCourseUrl = DEFAULT_URL + '/api/Course/get'
@@ -36,8 +37,7 @@ class CoursesService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get course error', errorToast)
             }
         } finally {
             this.loading = false
@@ -58,8 +58,7 @@ class CoursesService {
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
-                const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get course error', errorToast)
             }
         } finally {
             this.loadingCourse = false
@@ -80,7 +79,7 @@ class CoursesService {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Get courses error', errorToast)
             }
         } finally {
             this.loading = false
@@ -92,13 +91,13 @@ class CoursesService {
             const params = {...course}
             const response = await $api.post(createCourseUrl, params)
             const {success, data} = response.data
-            if (!success) return console.log('error createCourse ')
-            console.log(data)
+            if (!success) return console.log('error create Course ')
+            return data.id
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Create course error', errorToast)
             }
         }
     }
@@ -114,7 +113,7 @@ class CoursesService {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Update course error', errorToast)
             }
         }
     }
@@ -123,14 +122,14 @@ class CoursesService {
         try {
             const params = {id}
             const response = await $api.get(deleteCourseUrl, {params})
-            const {success, data} = response.data
+            const {success} = response.data
             if (!success) return console.log('error deleteCourse')
             runInAction(() => (this.courses = this.courses.filter((course) => course.id !== id)))
         } catch (err) {
             const errors = err as Error | AxiosError;
             if (axios.isAxiosError(errors)) {
                 const error = errors.response?.data as ErrorCourse
-                console.log(error.errorMessage)
+                toast.error('Delete course error', errorToast)
             }
         }
     }
