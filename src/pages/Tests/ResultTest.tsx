@@ -16,9 +16,9 @@ const ResultTest = observer(() => {
     if (!resultTest) return null
     const {results, professionalType, professions} = resultTest
     const barColor = (value: number) => value < 50 ? classes.barColorRed : value >= 80 ? classes.barColorGreen : classes.barColorOrange
-    const handleGetCourses = (profType: number, prof: string) => () => {
+    const handleGetCourses = (id: number, prof: string) => () => {
         localStorage.setItem('prof', prof)
-        navigate(`/courses/${profType}`)
+        navigate(`/courses/${id}`)
     }
     return <Box style={{flexGrow: 1}}>
         <Box marginBottom={'16px'}>
@@ -56,7 +56,7 @@ const ResultTest = observer(() => {
                             <Box>
                                 <Button variant={'text'}
                                         className={classes.selectButton}
-                                        onClick={handleGetCourses(profession.profType, profession.name)}
+                                        onClick={handleGetCourses(profession.id, profession.name)}
                                 >Выбрать направление</Button>
                             </Box>
                         </Paper>
